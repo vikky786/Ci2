@@ -211,6 +211,24 @@ var myApp=angular.module('myModule0',[])
                               })
                               //$locationProvider.html5Mode(true);
                         }) 
+                         .factory('StudentDataOp', ['$http', function ($http) {
+
+                         // var urlBase = 'http://localhost:2307/Service1.svc';
+                          var StudentDataOp = {};
+
+                          StudentDataOp.getStudents = function () {
+                              return $http({
+
+                                method:"GET",
+                                url:"http://localhost/CI/index.php/Controller/student"
+                               })
+                          };
+
+                         /* StudentDataOp.addStudent = function (stud) {
+                              return $http.post(urlBase + '/AddStudent', stud);
+                          };*/
+                          return StudentDataOp;
+                        }])
 
 
                         .controller('addController',function($scope,$http,$interval){
@@ -289,7 +307,7 @@ var myApp=angular.module('myModule0',[])
                           .then(sucess,failed)
                         }
                         })
-                        .controller('manageController',function($scope,$http){
+                        .controller('manageController',function($scope,$http,StudentDataOp){
                                  $scope.rowlimit=5;
                                  $scope.Isvisible=false;
                                 $scope.sortColumn="fname";
@@ -307,19 +325,36 @@ var myApp=angular.module('myModule0',[])
                                 }
                                 return "";
                               }
-                               var sucess=function(response){
+
+                              /*StudentDataOp.getStudents()
+                                    .$promise
+                                    .then(
+                                      function(data){
+                                        console.log(data);
+                                      });*/
+                             
+
+                                 StudentDataOp.getStudents()
+                                  .success(function (studs) {
+                                      $scope.sucess = studs;
+                                      console.log($scope.sucess)
+                                  })
+                                  .error(function (error) {
+                                      $scope.status = 'Unable to load customer data: ' + error.message;
+                                  });
+                               /* var sucess=function(response){
                                 $scope.sucess=response.data;
+                                console.log("success");
                                }
 
                                var fail=function(response){
                                 $scope.fail=response.data;
-                               }
-                               $http({
-
-                                method:"GET",
-                                url:"http://localhost/CI/index.php/Controller/student"
-                               })
-                               .then(sucess,fail)
+                                console.log("failed");
+                               }*/
+                               
+                              
+                              
+                               
 
                                $scope.delete=function(name)
                                {
